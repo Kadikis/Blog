@@ -21,8 +21,19 @@
 
         <p class="mb-2 line-clamp-3 text-sm text-gray-700">{{ post.excerpt }}</p>
         <div class="mt-auto flex items-center justify-between text-xs text-gray-500">
-            <span>By {{ post.author }}</span>
-            <span>{{ formattedDate }}</span>
+            <span>
+                <span class="flex items-center gap-1">
+                    By {{ post.author }}
+                    <span class="text-gray-500">|</span>
+                    {{ formattedDate }}
+                </span>
+            </span>
+            <span>
+                <span class="flex items-center gap-1">
+                    <MessageCircle class="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                    {{ post.comment_count }}
+                </span>
+            </span>
         </div>
         <slot name="actions" />
     </div>
@@ -30,6 +41,7 @@
 
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
+import { MessageCircle } from 'lucide-vue-next';
 import { computed, defineProps } from 'vue';
 
 const props = defineProps<{
@@ -43,6 +55,7 @@ const props = defineProps<{
             id: number;
             name: string;
         }>;
+        comment_count: number;
     };
 }>();
 

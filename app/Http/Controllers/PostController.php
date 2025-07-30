@@ -12,7 +12,8 @@ class PostController extends Controller
     public function index(): InertiaResponse
     {
         return Inertia::render('Posts/Index', [
-            'posts' => Post::with('categories')
+            'posts' => Post::with('categories', 'user')
+                ->withCount('comments')
                 ->where('published_at', '<=', now())
                 ->orderBy('published_at', 'desc')
                 ->get()
@@ -22,7 +23,7 @@ class PostController extends Controller
 
     public function show(string $id): InertiaResponse|RedirectResponse
     {
-        $post = Post::with('categories')
+        $post = Post::with('categories', 'comments.user')
             ->where('published_at', '<=', now())
             ->find($id);
 

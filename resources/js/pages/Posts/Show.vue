@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import AppHeader from '@/components/AppHeader.vue';
+import CommentSection from '@/components/Comments/CommentSection.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { ArrowLeft, Calendar, User } from 'lucide-vue-next';
 import { computed, defineProps } from 'vue';
@@ -16,6 +17,16 @@ const props = defineProps<{
             categories?: Array<{
                 id: number;
                 name: string;
+            }>;
+            comments?: Array<{
+                id: number;
+                content: string;
+                user: {
+                    id: number;
+                    name: string;
+                    is_admin: boolean;
+                };
+                created_at: string;
             }>;
         };
     };
@@ -81,6 +92,8 @@ const formattedDate = computed(() => {
                         {{ post.data.body }}
                     </div>
                 </div>
+
+                <CommentSection :post-id="post.data.id" :comments="post.data.comments" />
             </article>
         </div>
     </div>

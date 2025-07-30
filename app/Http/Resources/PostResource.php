@@ -17,6 +17,8 @@ class PostResource extends JsonResource
             'author' => $this->user->name,
             'published_at' => $this->published_at?->toDateTimeString(),
             'categories' => CategoryResource::collection($this->whenLoaded('categories')),
+            'comments' => CommentResource::collection($this->whenLoaded('comments')),
+            'comment_count' => $this->whenCounted('comments'),
         ];
     }
 }
