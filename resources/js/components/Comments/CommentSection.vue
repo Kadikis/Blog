@@ -141,7 +141,7 @@ const formatCommentDate = (dateString: string) => {
                             </div>
                         </div>
 
-                        <div v-if="comment.user.id === auth.user.id || auth.user.is_admin" class="ml-4">
+                        <div v-if="comment.user.id === auth.user?.id || auth.user?.is_admin" class="ml-4">
                             <Button
                                 @click="deleteComment(comment.id)"
                                 variant="ghost"
