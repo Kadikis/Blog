@@ -16,6 +16,7 @@ class PostResource extends JsonResource
             'excerpt' => Str::limit($this->body, 100),
             'author' => $this->user->name,
             'published_at' => $this->published_at?->toDateTimeString(),
+            'categories' => CategoryResource::collection($this->whenLoaded('categories')),
         ];
     }
 }

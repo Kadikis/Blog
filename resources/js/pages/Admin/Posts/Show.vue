@@ -14,6 +14,10 @@ const props = defineProps<{
             excerpt: string;
             author: string;
             published_at: string;
+            categories?: Array<{
+                id: number;
+                name: string;
+            }>;
         };
     };
 }>();
@@ -50,6 +54,20 @@ const formatDate = (dateString: string) => {
                     <div class="flex items-start justify-between gap-4">
                         <div class="min-w-0 flex-1">
                             <h1 class="text-3xl font-bold tracking-tight">{{ post.data.title }}</h1>
+
+                            <!-- Categories -->
+                            <div v-if="post.data.categories && post.data.categories.length > 0" class="mt-3 mb-2">
+                                <div class="flex flex-wrap gap-2">
+                                    <span
+                                        v-for="category in post.data.categories"
+                                        :key="category.id"
+                                        class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-700 ring-1 ring-gray-700/10 ring-inset dark:bg-gray-400/10 dark:text-gray-400 dark:ring-gray-400/30"
+                                    >
+                                        {{ category.name }}
+                                    </span>
+                                </div>
+                            </div>
+
                             <div class="mt-2 flex items-center gap-4 text-sm text-muted-foreground">
                                 <span class="font-medium">By {{ post.data.author }}</span>
                                 <span>•</span>

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Post;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class PostService
@@ -13,6 +14,8 @@ class PostService
             'title' => 'required|string|max:255',
             'body' => 'required|string',
             'published_at' => 'date|nullable',
+            'categories' => 'array',
+            'categories.*' => 'exists:categories,id',
         ]);
     }
 
@@ -27,6 +30,11 @@ class PostService
         $post->user_id = $userId;
         $post->save();
 
+        // Sync categories if provided
+        if (isset($validated['categories'])) {
+            $post->categories()->sync($validated['categories']);
+        }
+
         return $post;
     }
 
@@ -39,6 +47,11 @@ class PostService
         $post->body = $validated['body'];
         $post->published_at = $validated['published_at'];
         $post->save();
+
+        // Sync categories if provided
+        if (isset($validated['categories'])) {
+            $post->categories()->sync($validated['categories']);
+        }
 
         return $post;
     }

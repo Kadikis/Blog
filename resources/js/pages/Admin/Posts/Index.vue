@@ -14,6 +14,10 @@ defineProps<{
             excerpt: string;
             author: string;
             published_at: string;
+            categories?: Array<{
+                id: number;
+                name: string;
+            }>;
         }>;
     };
 }>();
@@ -65,6 +69,20 @@ const formatDate = (dateString: string) => {
                                     <h3 class="truncate text-lg font-semibold transition-colors group-hover:text-primary">
                                         {{ post.title }}
                                     </h3>
+
+                                    <!-- Categories -->
+                                    <div v-if="post.categories && post.categories.length > 0" class="mt-1 mb-2">
+                                        <div class="flex flex-wrap gap-1">
+                                            <span
+                                                v-for="category in post.categories"
+                                                :key="category.id"
+                                                class="inline-flex items-center rounded bg-gray-50 px-1.5 py-0.5 text-xs font-medium text-gray-700 dark:bg-gray-400/10 dark:text-gray-400"
+                                            >
+                                                {{ category.name }}
+                                            </span>
+                                        </div>
+                                    </div>
+
                                     <p class="mt-1 line-clamp-2 text-sm text-muted-foreground">
                                         {{ post.excerpt }}
                                     </p>

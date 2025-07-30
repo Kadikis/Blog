@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/AppLayout.vue';
@@ -10,12 +11,24 @@ import { defineProps } from 'vue';
 
 const props = defineProps<{
     post: {
-        id: number;
-        title: string;
-        body: string;
-        excerpt: string;
-        author: string;
-        published_at: string;
+        data: {
+            id: number;
+            title: string;
+            body: string;
+            excerpt: string;
+            author: string;
+            published_at: string;
+            categories?: Array<{
+                id: number;
+                name: string;
+            }>;
+        };
+    };
+    categories: {
+        data: Array<{
+            id: number;
+            name: string;
+        }>;
     };
 }>();
 
@@ -44,6 +57,7 @@ const form = useForm({
     title: props.post.data.title,
     body: props.post.data.body,
     published_at: formatDateTimeLocal(props.post.data.published_at),
+    categories: (props.post.data.categories || []).map((cat) => cat.id) as number[],
 });
 
 const submit = () => {
@@ -144,6 +158,37 @@ const deletePost = () => {
                                     :class="{ 'border-destructive': form.errors.published_at }"
                                 />
                                 <InputError :message="form.errors.published_at" />
+                            </div>
+
+                            <!-- Categories Field -->
+                            <div class="space-y-2">
+                                <Label>Categories</Label>
+                                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                                    <div v-for="category in categories.data" :key="category.id" class="flex items-center space-x-2">
+                                        <Checkbox
+                                            :id="`category-${category.id}`"
+                                            :model-value="form.categories.includes(category.id)"
+                                            @update:model-value="
+                                                (checked: boolean) => {
+                                                    if (checked) {
+                                                        if (!form.categories.includes(category.id)) {
+                                                            form.categories.push(category.id);
+                                                        }
+                                                    } else {
+                                                        const index = form.categories.indexOf(category.id);
+                                                        if (index > -1) {
+                                                            form.categories.splice(index, 1);
+                                                        }
+                                                    }
+                                                }
+                                            "
+                                        />
+                                        <Label :for="`category-${category.id}`" class="cursor-pointer text-sm font-normal">
+                                            {{ category.name }}
+                                        </Label>
+                                    </div>
+                                </div>
+                                <InputError :message="form.errors.categories" />
                             </div>
 
                             <!-- Action Buttons -->

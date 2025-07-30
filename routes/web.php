@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\Admin\PostController as AdminPostController;
+use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -13,13 +14,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'verified', 'is-admi
         return Inertia::render('Dashboard');
     })->name('admin.dashboard');
 
-    Route::get('/posts', [AdminPostController::class, 'index'])->name('admin.posts.index');
-    Route::get('/posts/create', [AdminPostController::class, 'create'])->name('admin.posts.create');
-    Route::post('/posts', [AdminPostController::class, 'store'])->name('admin.posts.store');
-    Route::get('/posts/{id}', [AdminPostController::class, 'show'])->name('admin.posts.show');
-    Route::get('/posts/{id}/edit', [AdminPostController::class, 'edit'])->name('admin.posts.edit');
-    Route::put('/posts/{id}', [AdminPostController::class, 'update'])->name('admin.posts.update');
-    Route::delete('/posts/{id}', [AdminPostController::class, 'destroy'])->name('admin.posts.destroy');
+    Route::resource('posts', AdminPostController::class)->names('admin.posts');
+    Route::resource('categories', AdminCategoryController::class)->names('admin.categories');
 });
 
 

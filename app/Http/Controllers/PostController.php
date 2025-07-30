@@ -12,13 +12,20 @@ class PostController extends Controller
     public function index(): InertiaResponse
     {
         return Inertia::render('Posts/Index', [
-            'posts' => Post::where('published_at', '<=', now())->get()->toResourceCollection(),
+            'posts' => Post::with('categories')
+                ->where('published_at', '<=', now())
+                ->orderBy('published_at', 'desc')
+                ->get()
+                ->toResourceCollection(),
         ]);
     }
 
     public function show(string $id): InertiaResponse|RedirectResponse
     {
-        $post = Post::where('published_at', '<=', now())->find($id);
+        $post = Post::with('categories')
+            ->where('published_at', '<=', now())
+            ->find($id);
+
         if (!$post) {
             return redirect()->route('posts.index');
         }

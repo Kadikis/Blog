@@ -11,6 +11,10 @@ defineProps<{
             excerpt: string;
             author: string;
             published_at: string;
+            categories?: Array<{
+                id: number;
+                name: string;
+            }>;
         };
     };
 }>();
@@ -57,6 +61,20 @@ defineProps<{
                 <h1 class="mb-4 text-3xl font-bold text-gray-900 lg:text-4xl dark:text-gray-100">
                     {{ post.data.title }}
                 </h1>
+
+                <!-- Categories -->
+                <div v-if="post.data.categories && post.data.categories.length > 0" class="not-prose mb-6">
+                    <div class="flex flex-wrap gap-2">
+                        <span
+                            v-for="category in post.data.categories"
+                            :key="category.id"
+                            class="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                        >
+                            {{ category.name }}
+                        </span>
+                    </div>
+                </div>
+
                 <div class="leading-relaxed whitespace-pre-wrap">
                     {{ post.data.body }}
                 </div>

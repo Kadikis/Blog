@@ -10,6 +10,7 @@ use App\Services\PostService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Post;
+use App\Models\Category;
 
 class PostController extends Controller
 {
@@ -22,7 +23,8 @@ class PostController extends Controller
         }
 
         return Inertia::render('Admin/Posts/Index', [
-            'posts' => Post::where('user_id', Auth::user()->id)
+            'posts' => Post::with('categories')
+                ->where('user_id', Auth::user()->id)
                 ->orderBy('published_at', 'desc')
                 ->get()
                 ->toResourceCollection(),
@@ -35,7 +37,9 @@ class PostController extends Controller
             abort(403);
         }
 
-        return Inertia::render('Admin/Posts/Create');
+        return Inertia::render('Admin/Posts/Create', [
+            'categories' => Category::all()->toResourceCollection(),
+        ]);
     }
 
     public function store(Request $request): RedirectResponse
@@ -52,20 +56,20 @@ class PostController extends Controller
 
     public function show(string $id): InertiaResponse|RedirectResponse
     {
-        $post = Post::find($id);
+        $post = Post::with('categories')->find($id);
 
         if (Auth::user()->cannot('view', $post)) {
             abort(403);
         }
 
         return Inertia::render('Admin/Posts/Show', [
-            'post' => Post::find($id)->toResource(),
+            'post' => $post->toResource(),
         ]);
     }
 
     public function edit(string $id): InertiaResponse|RedirectResponse
     {
-        $post = Post::findOrFail($id);
+        $post = Post::with('categories')->findOrFail($id);
 
         if (Auth::user()->cannot('update', $post)) {
             abort(403);
@@ -73,6 +77,7 @@ class PostController extends Controller
 
         return Inertia::render('Admin/Posts/Edit', [
             'post' => $post->toResource(),
+            'categories' => Category::all()->toResourceCollection(),
         ]);
     }
 
