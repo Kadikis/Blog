@@ -7,12 +7,11 @@ import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { NavigationMenu, NavigationMenuItem, NavigationMenuList, navigationMenuTriggerStyle } from '@/components/ui/navigation-menu';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import UserMenuContent from '@/components/UserMenuContent.vue';
 import { getInitials } from '@/composables/useInitials';
 import type { BreadcrumbItem, NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid, Menu, Search } from 'lucide-vue-next';
+import { LayoutGrid, Menu, Search } from 'lucide-vue-next';
 import { computed } from 'vue';
 
 interface Props {
@@ -34,22 +33,9 @@ const activeItemStyles = computed(
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
+        title: 'Admin Dashboard',
         href: '/admin/dashboard',
         icon: LayoutGrid,
-    },
-];
-
-const rightNavItems: NavItem[] = [
-    {
-        title: 'Repository',
-        href: 'https://github.com/laravel/vue-starter-kit',
-        icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: BookOpen,
     },
 ];
 </script>
@@ -84,30 +70,17 @@ const rightNavItems: NavItem[] = [
                                         {{ item.title }}
                                     </Link>
                                 </nav>
-                                <div class="flex flex-col space-y-4">
-                                    <a
-                                        v-for="item in rightNavItems"
-                                        :key="item.title"
-                                        :href="item.href"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        class="flex items-center space-x-2 text-sm font-medium"
-                                    >
-                                        <component v-if="item.icon" :is="item.icon" class="h-5 w-5" />
-                                        <span>{{ item.title }}</span>
-                                    </a>
-                                </div>
                             </div>
                         </SheetContent>
                     </Sheet>
                 </div>
 
-                <Link :href="route('admin.dashboard')" class="flex items-center gap-x-2">
+                <Link :href="route('posts.index')" class="flex items-center gap-x-2">
                     <AppLogo />
                 </Link>
 
                 <!-- Desktop Menu -->
-                <div class="hidden h-full lg:flex lg:flex-1">
+                <div v-if="auth.user?.is_admin" class="hidden h-full lg:flex lg:flex-1">
                     <NavigationMenu class="ml-10 flex h-full items-stretch">
                         <NavigationMenuList class="flex h-full items-stretch space-x-2">
                             <NavigationMenuItem v-for="(item, index) in mainNavItems" :key="index" class="relative flex h-full items-center">
@@ -132,29 +105,8 @@ const rightNavItems: NavItem[] = [
                         <Button variant="ghost" size="icon" class="group h-9 w-9 cursor-pointer">
                             <Search class="size-5 opacity-80 group-hover:opacity-100" />
                         </Button>
-
-                        <div class="hidden space-x-1 lg:flex">
-                            <template v-for="item in rightNavItems" :key="item.title">
-                                <TooltipProvider :delay-duration="0">
-                                    <Tooltip>
-                                        <TooltipTrigger>
-                                            <Button variant="ghost" size="icon" as-child class="group h-9 w-9 cursor-pointer">
-                                                <a :href="item.href" target="_blank" rel="noopener noreferrer">
-                                                    <span class="sr-only">{{ item.title }}</span>
-                                                    <component :is="item.icon" class="size-5 opacity-80 group-hover:opacity-100" />
-                                                </a>
-                                            </Button>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p>{{ item.title }}</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                </TooltipProvider>
-                            </template>
-                        </div>
                     </div>
-
-                    <DropdownMenu>
+                    <DropdownMenu v-if="auth.user">
                         <DropdownMenuTrigger :as-child="true">
                             <Button
                                 variant="ghost"
@@ -173,6 +125,20 @@ const rightNavItems: NavItem[] = [
                             <UserMenuContent :user="auth.user" />
                         </DropdownMenuContent>
                     </DropdownMenu>
+                    <div v-else>
+                        <Link
+                            :href="route('login')"
+                            class="inline-block rounded-sm border border-transparent px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#19140035] dark:text-[#EDEDEC] dark:hover:border-[#3E3E3A]"
+                        >
+                            Log in
+                        </Link>
+                        <Link
+                            :href="route('register')"
+                            class="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
+                        >
+                            Register
+                        </Link>
+                    </div>
                 </div>
             </div>
         </div>
