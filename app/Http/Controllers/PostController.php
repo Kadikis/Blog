@@ -6,18 +6,28 @@ use Inertia\Inertia;
 use App\Models\Post;
 use Inertia\Response as InertiaResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
-    public function index(): InertiaResponse
+    public function index(Request $request): InertiaResponse
     {
+        $query = Post::with('categories', 'user')
+            ->withCount('comments')
+            ->where('published_at', '<=', now())
+            ->orderBy('published_at', 'desc')
+            ->orderBy('id', 'desc');
+
+        if ($request->search_query) {
+            $query->where(function ($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->search_query . '%')
+                    ->orWhere('body', 'like', '%' . $request->search_query . '%');
+            });
+        }
+
         return Inertia::render('Posts/Index', [
-            'posts' => Post::with('categories', 'user')
-                ->withCount('comments')
-                ->where('published_at', '<=', now())
-                ->orderBy('published_at', 'desc')
-                ->get()
-                ->toResourceCollection(),
+            'posts' => $query->get()->toResourceCollection(),
+            'searchQuery' => $request->search_query,
         ]);
     }
 
