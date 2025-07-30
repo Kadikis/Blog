@@ -22,7 +22,7 @@
         <p class="mb-2 line-clamp-3 text-sm text-gray-700">{{ post.excerpt }}</p>
         <div class="mt-auto flex items-center justify-between text-xs text-gray-500">
             <span>By {{ post.author }}</span>
-            <span>{{ post.published_at }}</span>
+            <span>{{ formattedDate }}</span>
         </div>
         <slot name="actions" />
     </div>
@@ -30,9 +30,9 @@
 
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { defineProps } from 'vue';
+import { computed, defineProps } from 'vue';
 
-defineProps<{
+const props = defineProps<{
     post: {
         id: number;
         title: string;
@@ -45,4 +45,13 @@ defineProps<{
         }>;
     };
 }>();
+
+// Format the published date
+const formattedDate = computed(() => {
+    return new Date(props.post.published_at).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+    });
+});
 </script>

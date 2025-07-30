@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
-import { defineProps } from 'vue';
+import AppHeader from '@/components/AppHeader.vue';
+import { Head, Link } from '@inertiajs/vue3';
+import { ArrowLeft, Calendar, User } from 'lucide-vue-next';
+import { computed, defineProps } from 'vue';
 
-defineProps<{
+const props = defineProps<{
     post: {
         data: {
             id: number;
@@ -18,72 +20,68 @@ defineProps<{
         };
     };
 }>();
+
+// Format the published date
+const formattedDate = computed(() => {
+    return new Date(props.post.data.published_at).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+    });
+});
 </script>
 
 <template>
-    <div class="flex min-h-screen flex-col items-center bg-[#FDFDFC] p-6 text-[#1b1b18] lg:justify-center lg:p-8 dark:bg-[#0a0a0a]">
-        <header class="mb-6 w-full max-w-[335px] text-sm not-has-[nav]:hidden lg:max-w-4xl">
-            <nav class="flex items-center justify-between gap-4">
-                <Link
-                    :href="route('posts.index')"
-                    class="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
-                >
-                    ← Back to Posts
-                </Link>
-                <div class="flex items-center gap-4">
+    <Head :title="post.data.title" />
+    <AppHeader />
+    <div class="min-h-screen bg-white dark:bg-gray-900">
+        <div class="container mx-auto px-4 py-8 lg:py-12">
+            <article class="mx-auto max-w-3xl">
+                <div class="mb-6">
                     <Link
-                        v-if="$page.props.auth.user"
-                        :href="route('admin.dashboard')"
-                        class="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
+                        :href="route('posts.index')"
+                        class="inline-flex items-center gap-2 text-sm text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
                     >
-                        Dashboard
+                        <ArrowLeft class="h-4 w-4" />
+                        Back to Posts
                     </Link>
-                    <template v-else>
-                        <Link
-                            :href="route('login')"
-                            class="inline-block rounded-sm border border-transparent px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#19140035] dark:text-[#EDEDEC] dark:hover:border-[#3E3E3A]"
-                        >
-                            Log in
-                        </Link>
-                        <Link
-                            :href="route('register')"
-                            class="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
-                        >
-                            Register
-                        </Link>
-                    </template>
                 </div>
-            </nav>
-        </header>
 
-        <article class="w-full max-w-[335px] lg:max-w-4xl">
-            <div class="prose prose-lg max-w-none text-gray-800 dark:text-gray-200">
-                <h1 class="mb-4 text-3xl font-bold text-gray-900 lg:text-4xl dark:text-gray-100">
-                    {{ post.data.title }}
-                </h1>
+                <header class="mb-8 border-b border-gray-200 pb-8 dark:border-gray-700">
+                    <h1 class="mb-4 text-3xl font-bold text-gray-900 lg:text-4xl dark:text-gray-100">
+                        {{ post.data.title }}
+                    </h1>
 
-                <!-- Categories -->
-                <div v-if="post.data.categories && post.data.categories.length > 0" class="not-prose mb-6">
-                    <div class="flex flex-wrap gap-2">
-                        <span
-                            v-for="category in post.data.categories"
-                            :key="category.id"
-                            class="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700 dark:bg-gray-800 dark:text-gray-300"
-                        >
-                            {{ category.name }}
-                        </span>
+                    <div v-if="post.data.categories && post.data.categories.length > 0" class="mb-4">
+                        <div class="flex flex-wrap gap-1">
+                            <span
+                                v-for="category in post.data.categories"
+                                :key="category.id"
+                                class="inline-flex items-center rounded bg-gray-50 px-1.5 py-0.5 text-xs font-medium text-gray-700 dark:bg-gray-400/10 dark:text-gray-400"
+                            >
+                                {{ category.name }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+                        <div class="flex items-center gap-1">
+                            <User class="h-4 w-4" />
+                            <span>{{ post.data.author }}</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <Calendar class="h-4 w-4" />
+                            <span>{{ formattedDate }}</span>
+                        </div>
+                    </div>
+                </header>
+
+                <div class="prose prose-lg dark:prose-invert max-w-none text-gray-800 dark:text-gray-200">
+                    <div class="leading-relaxed whitespace-pre-wrap">
+                        {{ post.data.body }}
                     </div>
                 </div>
-
-                <div class="leading-relaxed whitespace-pre-wrap">
-                    {{ post.data.body }}
-                </div>
-            </div>
-
-            <div class="mt-10 flex items-center justify-between text-xs text-gray-500">
-                <span>By {{ post.data.author }}</span>
-                <span>{{ post.data.published_at }}</span>
-            </div>
-        </article>
+            </article>
+        </div>
     </div>
 </template>
