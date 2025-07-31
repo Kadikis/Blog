@@ -49,8 +49,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 // Format datetime for input field
 const formatDateTimeLocal = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toISOString().slice(0, 16);
+    return dateString.replace(' ', 'T').slice(0, 16);
 };
 
 const form = useForm({
