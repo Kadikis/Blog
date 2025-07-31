@@ -50,4 +50,19 @@ class User extends Authenticatable
     {
         return $this->is_admin;
     }
+
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
+
+    public function publishedPosts()
+    {
+        return $this->hasMany(Post::class)->whereNotNull('published_at');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
 }

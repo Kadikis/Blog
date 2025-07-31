@@ -4,6 +4,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\Admin\PostController as AdminPostController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -16,10 +17,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
 });
 
 Route::group(['prefix' => 'admin', 'middleware' => ['auth', 'verified', 'is-admin']], function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('admin.dashboard');
-
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
     Route::resource('posts', AdminPostController::class)->names('admin.posts');
     Route::resource('categories', AdminCategoryController::class)->names('admin.categories');
 });
