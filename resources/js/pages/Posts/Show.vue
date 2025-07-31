@@ -13,6 +13,7 @@ const props = defineProps<{
             body: string;
             excerpt: string;
             author: string;
+            user_id: number;
             published_at: string;
             categories?: Array<{
                 id: number;
@@ -93,7 +94,7 @@ const formattedDate = computed(() => {
                     </div>
                 </div>
 
-                <CommentSection :post-id="post.data.id" :comments="post.data.comments" />
+                <CommentSection :post-id="post.data.id" :comments="post.data.comments" :post="{ id: post.data.id, user_id: post.data.user_id }" />
             </article>
         </div>
     </div>

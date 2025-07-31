@@ -16,9 +16,15 @@ interface Comment {
     created_at: string;
 }
 
+interface Post {
+    id: number;
+    user_id: number;
+}
+
 interface Props {
     postId: number;
     comments?: Comment[];
+    post: Post;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -141,7 +147,7 @@ const formatCommentDate = (dateString: string) => {
                             </div>
                         </div>
 
-                        <div v-if="comment.user.id === auth.user?.id || auth.user?.is_admin" class="ml-4">
+                        <div v-if="comment.user.id === auth.user?.id || (auth.user?.is_admin && post.user_id === auth.user?.id)" class="ml-4">
                             <Button
                                 @click="deleteComment(comment.id)"
                                 variant="ghost"

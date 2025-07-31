@@ -14,6 +14,7 @@ class PostResource extends JsonResource
             'title' => $this->title,
             'body' => $this->body,
             'excerpt' => Str::limit($this->body, 100),
+            'user_id' => $this->user_id,
             'author' => $this->user->name,
             'published_at' => $this->published_at?->toDateTimeString(),
             'categories' => CategoryResource::collection($this->whenLoaded('categories')),
