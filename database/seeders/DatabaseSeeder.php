@@ -22,7 +22,12 @@ class DatabaseSeeder extends Seeder
             'is_admin' => true,
         ]);
 
-        Post::factory(10)->create();
-        Category::factory(5)->create();
+        $categories = Category::factory(5)->create();
+
+        Post::factory(10)->create()->each(function ($post) use ($categories) {
+            $post->categories()->attach(
+                $categories->random(rand(1, 3))->pluck('id')->toArray()
+            );
+        });
     }
 }
