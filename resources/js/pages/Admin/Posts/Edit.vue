@@ -55,7 +55,7 @@ const formatDateTimeLocal = (dateString: string) => {
 const form = useForm({
     title: props.post.data.title,
     body: props.post.data.body,
-    published_at: formatDateTimeLocal(props.post.data.published_at),
+    published_at: formatDateTimeLocal(props.post.data.published_at ?? ''),
     categories: (props.post.data.categories || []).map((cat) => cat.id) as number[],
 });
 
