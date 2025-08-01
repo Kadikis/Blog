@@ -26,7 +26,7 @@ class PostService
         $post = new Post();
         $post->title = $validated['title'];
         $post->body = $validated['body'];
-        $post->published_at = $validated['published_at'];
+        $post->published_at = $validated['published_at'] ?? null;
         $post->user_id = $userId;
         $post->save();
 
@@ -45,7 +45,7 @@ class PostService
         $post = Post::find($postId);
         $post->title = $validated['title'];
         $post->body = $validated['body'];
-        $post->published_at = $validated['published_at'];
+        $post->published_at = $validated['published_at'] ?? null;
         $post->save();
 
         // Sync categories if provided
@@ -60,6 +60,6 @@ class PostService
     {
         $post = Post::find($postId);
 
-        return $post->delete();
+        return $post ? $post->delete() : false;
     }
 }
